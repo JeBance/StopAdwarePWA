@@ -44,7 +44,7 @@ const globalAddressList = [];
 let hosts = '';
 
 function refreshSources() {
-	let requestURL = 'https://raw.githubusercontent.com/JeBance/StopAdware/gh-pages/servers.json';
+	let requestURL = 'https://raw.githubusercontent.com/JeBance/StopAdwarePWA/gh-pages/servers.json';
 	let request = new XMLHttpRequest();
 	request.open('GET', requestURL);
 	request.responseType = 'json';
