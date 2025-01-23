@@ -121,7 +121,7 @@ async function wrap(elem) {
 				console.log(listSources[keys[i]]);
 				var list = await downloadListFromSource(listSources[keys[i]]);
 				if (list) await parseListFromSource(list);
-				p.textContent = 'Обработано источников: ' + (i + 1) + '<br>Всего адресов: ' + globalAddressList.length;
+				p.textContent = 'Обработано источников: ' + (i + 1) + `\n` + 'Всего адресов: ' + globalAddressList.length;
 			}
 			await generateFile();
 			buttonDownload.removeAttribute('disabled');
