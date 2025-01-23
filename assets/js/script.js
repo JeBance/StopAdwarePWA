@@ -69,17 +69,6 @@ async function refreshSources() {
 	}
 }
 
-let progressSource = new Object();
-
-progressSource.loading = function(id, progress, link) {
-	progressSource.id = 'progressSource-' + id;
-	if (progress < 100) {
-		progressSource.style.color = 'red';
-	} else {
-		progressSource.style.color = 'green';
-	}
-}
-
 async function downloadSources(requestURL) {
 	try {
 		let checkURL = new Promise((resolve, reject) => {
@@ -149,12 +138,8 @@ async function generateFile() {
 
 async function wrap(elem) {
 	switch(elem.innerHTML) {
-		case 'Обновить источники':
-			refreshSources();
-			break;
-
 		case 'Генерация файла':
-			buttonRefresh.remove();
+			await refreshSources();
 			buttonGenerate.id = 'buttonDownload';
 			buttonDownload.innerHTML = 'Скачать';
 			buttonDownload.setAttribute('disabled', '');
