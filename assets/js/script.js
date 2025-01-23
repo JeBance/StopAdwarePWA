@@ -44,33 +44,28 @@ const globalAddressList = [];
 let hosts = '';
 
 function refreshSources() {
-	let requestURL = 'https://raw.githubusercontent.com/JeBance/StopAdwarePWA/gh-pages/servers.json';
-	let request = new XMLHttpRequest();
-	request.open('GET', requestURL);
-	request.responseType = 'json';
-	request.send();
-	request.onload = function() {
-		let response = request.response;
-		//console.log(response);
-		//console.log(response.length);
-		if (response.length > 0) {
-			countSources.innerHTML = 'Известные источники: ' + response.length;
-			countSources.setAttribute('style', 'color: green');
-			buttonGenerate.removeAttribute('disabled');
-		}
-		let keys = Object.keys(response);
-		//console.log(keys);
-		let result = '';
+	try {
+		let url = 'https://raw.githubusercontent.com/JeBance/StopAdwarePWA/gh-pages/servers.json';
+
+		let response = await fetch(url);
+		if (!response.ok) throw new Error('Failed to get sources list');
+
+		let list = await response.json();
+		if (list.length <= 0) throw new Error('Sources list is empty');
+
+		let keys = Object.keys(list);
 		for (let i = 0, l = keys.length; i < l; i++) {
-			listSources.push(response[keys[i]]);
+			listSources.push(list[keys[i]]);
 		}
-		return listSources;
-	}
-	request.onerror = function() {
+
+		countSources.innerHTML = 'Известные источники: ' + list.length;
+		countSources.setAttribute('style', 'color: green');
+		buttonGenerate.removeAttribute('disabled');
+	} catch(e) {
 		countSources.innerHTML = 'Ошибка! Источники не обновлены.';
 		countSources.setAttribute('style', 'color: #B22222');
 		buttonGenerate.setAttribute('disabled', '');
-		console.log('** An error occurred during the transaction');
+		console.log(e);
 	}
 }
 
