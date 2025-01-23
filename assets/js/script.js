@@ -72,63 +72,31 @@ async function refreshSources() {
 countSources.setAttribute('style', 'color: #B22222');
 refreshSources();
 
-async function downloadSources(requestURL) {
+async function downloadListFromSource(url = 'string') {
 	try {
-		let checkURL = new Promise((resolve, reject) => {
-			let request = new XMLHttpRequest();
-			request.open('GET', requestURL);
-			request.responseType = 'text';
-			request.send();
-			request.onload = (event) => {
-				if (request.status != 200) {
-					reject(`Error ${request.status}: ${request.statusText}`);
-				} else {
-					console.log(`Done! Received ${event.loaded} bytes`);
-					let response = request.response;
-					if (response.length > 0) resolve(response);
-				}
-			}
-			request.onerror = () => {
-				reject('Error!');
-			}
-			request.onprogress = (event) => {
-				if (event.lengthComputable) {
-					console.log(`Received ${event.loaded} of ${event.total} bytes`);
-				} else {
-					console.log(`Received ${event.loaded} bytes`);
-				}
-			};
-		});
-
-		await checkURL
-			.then((response) => {
-			//	parseSources(response);
-				let adrList = response.split('\n');
-				let keys = Object.keys(adrList);
-				for (let i = 0, l = keys.length; i < l; i++) {
-					if (adrList[keys[i]].includes('127.0.0.1') == true) {
-						globalAddressList.push(adrList[keys[i]].slice(10));
-					} else if (adrList[keys[i]].includes('0.0.0.0') == true) {
-						globalAddressList.push(adrList[keys[i]].slice(8));
-					}
-				}
-			//	console.log(globalAddressList);
-			})
-			.catch((error) => console.error(`${error}`));
+		let response = await fetch(url);
+		if (!response.ok) throw new Error('Failed to get list from source ' + url);
+		let list = await response.text();
+		return list;
 	} catch(e) {
-		console.log('Err:', requestURL);
+		console.log(e);
+		return false;
 	}
 }
 
-function parseSources(text) {
-	let adrList = text.split('\n');
-	let keys = Object.keys(adrList);
-	for (let i = 0, l = keys.length; i < l; i++) {
-		if (adrList[keys[i]].includes('127.0.0.1') == true) {
-			globalAddressList.push(adrList[keys[i]].slice(10));
-		} else if (adrList[keys[i]].includes('0.0.0.0') == true) {
-			globalAddressList.push(adrList[keys[i]].slice(8));
+async function parseListFromSource(list = 'string') {
+	try {
+		list = list.split('\n');
+		let keys = Object.keys(list);
+		for (let i = 0, l = keys.length; i < l; i++) {
+			if (list[keys[i]].includes('127.0.0.1') === true) {
+				globalAddressList.push((list[keys[i]].slice(10)).trim());
+			} else if (list[keys[i]].includes('0.0.0.0') === true) {
+				globalAddressList.push((list[keys[i]].slice(8)).trim());
+			}
 		}
+	} catch(e) {
+		console.log(e);
 	}
 }
 
@@ -150,10 +118,10 @@ async function wrap(elem) {
 			sources.append(p);
 			let keys = Object.keys(listSources);
 			for (let i = 0, l = keys.length; i < l; i++) {
-//			for (let i = 0, l = 4; i < l; i++) {
 				console.log(listSources[keys[i]]);
-				await downloadSources(listSources[keys[i]]);
-				p.textContent = 'Обработано: ' + (i + 1);
+				var list = await downloadListFromSource(listSources[keys[i]]);
+				if (list) await parseListFromSource(list);
+				p.textContent = 'Обработано источников: ' + (i + 1) + '<br>Всего адресов: ' + globalAddressList.length;
 			}
 			await generateFile();
 			buttonDownload.removeAttribute('disabled');
