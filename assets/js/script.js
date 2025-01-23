@@ -69,6 +69,9 @@ async function refreshSources() {
 	}
 }
 
+countSources.setAttribute('style', 'color: #B22222');
+refreshSources();
+
 async function downloadSources(requestURL) {
 	try {
 		let checkURL = new Promise((resolve, reject) => {
@@ -169,6 +172,3 @@ async function wrap(elem) {
 			break;
 	}
 }
-
-countSources.setAttribute('style', 'color: #B22222');
-refreshSources();
