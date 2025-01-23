@@ -43,7 +43,7 @@ const listSources = [];
 const globalAddressList = [];
 let hosts = '';
 
-function refreshSources() {
+async function refreshSources() {
 	try {
 		let url = 'https://raw.githubusercontent.com/JeBance/StopAdwarePWA/gh-pages/servers.json';
 
