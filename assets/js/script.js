@@ -113,16 +113,24 @@ async function wrap(elem) {
 			buttonGenerate.id = 'buttonDownload';
 			buttonDownload.innerHTML = 'Скачать';
 			buttonDownload.setAttribute('disabled', '');
+
 			let p = document.createElement('p');
-			p.textContent = 'Обработано: 0';
+			p.textContent = 'Обработано источников: 0';
 			sources.append(p);
+
+			let q = document.createElement('p');
+			q.textContent = 'Всего адресов: 0';
+			sources.append(q);
+
 			let keys = Object.keys(listSources);
 			for (let i = 0, l = keys.length; i < l; i++) {
 				console.log(listSources[keys[i]]);
 				var list = await downloadListFromSource(listSources[keys[i]]);
 				if (list) await parseListFromSource(list);
-				p.textContent = 'Обработано источников: ' + (i + 1) + `\n` + 'Всего адресов: ' + globalAddressList.length;
+				p.textContent = 'Обработано источников: ' + (i + 1);
+				q.textContent = 'Всего адресов: ' + globalAddressList.length;
 			}
+
 			await generateFile();
 			buttonDownload.removeAttribute('disabled');
 			break;
