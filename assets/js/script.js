@@ -139,7 +139,6 @@ async function generateFile() {
 async function wrap(elem) {
 	switch(elem.innerHTML) {
 		case 'Генерация файла':
-			await refreshSources();
 			buttonGenerate.id = 'buttonDownload';
 			buttonDownload.innerHTML = 'Скачать';
 			buttonDownload.setAttribute('disabled', '');
@@ -172,5 +171,4 @@ async function wrap(elem) {
 }
 
 countSources.setAttribute('style', 'color: #B22222');
-buttonGenerate.setAttribute('disabled', '');
-
+refreshSources();
